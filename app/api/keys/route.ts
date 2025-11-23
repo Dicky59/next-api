@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getAllKeys,
   createKey,
   generateApiKey,
+  getAllKeys,
 } from "./storage";
 
 // GET /api/keys - List all API keys
 export async function GET() {
   try {
-    const keys = getAllKeys();
+    const keys = await getAllKeys();
     return NextResponse.json(keys);
   } catch (error) {
+    console.error("Error fetching API keys:", error);
     return NextResponse.json(
       { error: "Failed to fetch API keys" },
       { status: 500 }
@@ -31,10 +32,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const newKey = createKey(name.trim(), generateApiKey());
+    const newKey = await createKey(name.trim(), generateApiKey());
 
     return NextResponse.json(newKey, { status: 201 });
   } catch (error) {
+    console.error("Error creating API key:", error);
     return NextResponse.json(
       { error: "Failed to create API key" },
       { status: 500 }

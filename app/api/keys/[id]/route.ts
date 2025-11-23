@@ -12,14 +12,15 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const key = getKeyById(id);
+    const key = await getKeyById(id);
 
     if (!key) {
       return NextResponse.json({ error: "API key not found" }, { status: 404 });
     }
 
     return NextResponse.json(key);
-  } catch {
+  } catch (error) {
+    console.error("Error fetching API key:", error);
     return NextResponse.json(
       { error: "Failed to fetch API key" },
       { status: 500 }
@@ -44,14 +45,15 @@ export async function PUT(
       );
     }
 
-    const updatedKey = updateKey(id, name.trim());
+    const updatedKey = await updateKey(id, name.trim());
 
     if (!updatedKey) {
       return NextResponse.json({ error: "API key not found" }, { status: 404 });
     }
 
     return NextResponse.json(updatedKey);
-  } catch {
+  } catch (error) {
+    console.error("Error updating API key:", error);
     return NextResponse.json(
       { error: "Failed to update API key" },
       { status: 500 }
@@ -66,7 +68,7 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    const deleted = deleteKey(id);
+    const deleted = await deleteKey(id);
 
     if (!deleted) {
       return NextResponse.json({ error: "API key not found" }, { status: 404 });
