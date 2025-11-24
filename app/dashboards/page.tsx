@@ -6,6 +6,7 @@ import CreateEditModal from "./components/CreateEditModal";
 import DeleteModal from "./components/DeleteModal";
 import EmptyState from "./components/EmptyState";
 import LoadingState from "./components/LoadingState";
+import Sidebar from "./components/Sidebar";
 import StatsCards from "./components/StatsCards";
 import ToastNotifications from "./components/ToastNotifications";
 import { ApiKey, Toast } from "./types";
@@ -23,6 +24,7 @@ export default function DashboardsPage() {
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [copiedKeyId, setCopiedKeyId] = useState<string | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const showToast = useCallback((message: string, type: Toast["type"] = "success") => {
     const id = Math.random().toString(36).substring(7);
@@ -214,15 +216,39 @@ export default function DashboardsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-600">
-            Plan, prioritize, and manage your API keys with ease.
-          </p>
+    <div className="flex min-h-screen bg-gray-50 -mt-16 pt-0">
+      {/* Sidebar */}
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      {/* Main Content */}
+      <div className="flex flex-1 flex-col transition-all">
+        {/* Header with Toggle Button */}
+        <div className="sticky top-0 z-30 flex items-center gap-4 border-b border-gray-200 bg-white px-4 py-3">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="rounded p-2 text-gray-600 hover:bg-gray-100"
+          >
+            {sidebarOpen ? (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900 lg:text-xl">Dashboard</h1>
         </div>
+
+        <div className="flex-1 px-4 py-8 sm:px-6 lg:px-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <p className="mt-2 text-gray-600">
+              Plan, prioritize, and manage your API keys with ease.
+            </p>
+          </div>
 
         {/* Action Buttons */}
         <div className="mb-6 flex flex-wrap items-center gap-3">
@@ -288,6 +314,7 @@ export default function DashboardsPage() {
 
         {/* Toast Notifications */}
         <ToastNotifications toasts={toasts} />
+        </div>
       </div>
     </div>
   );
